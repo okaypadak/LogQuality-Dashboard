@@ -1,4 +1,4 @@
-package entry;
+package tr.gov.ptt.LogQualityDashboard.entry;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -10,22 +10,23 @@ import java.util.List;
 public class LogEntry {
 
     @Id
-    private String id; // Elasticsearch ID'si
+    private String id;
 
-    private String inputType;
-    private Agent agent;
-    private Host host;
-    private Log log;
+    //private String inputType;
+    //private Agent agent;
+    //private Host host;
+    //private Log log;
+    //private List<String> tags;
+    //private Fields fields;
+    //private Ecs ecs;
+
     private String threadName;
-    private List<String> tags;
     private String loggerName;
-    private Fields fields;
     private String version;
     private String timestamp;
     private String level;
-    private int levelValue;
+    private long levelValue;
     private String message;
-    private Ecs ecs;
 
     @Data
     public static class Agent {

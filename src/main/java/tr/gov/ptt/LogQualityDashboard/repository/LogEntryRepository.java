@@ -1,7 +1,7 @@
-package tr.gov.ptt.LogQualityDasthboard.repository;
+package tr.gov.ptt.LogQualityDashboard.repository;
 
 
-import entry.LogEntry;
+import tr.gov.ptt.LogQualityDashboard.entry.LogEntry;
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
@@ -16,5 +16,5 @@ public interface LogEntryRepository extends ElasticsearchRepository<LogEntry, St
     @Query("{\"bool\": {\"must\": [{\"match\": {\"index\": \"?0\"}}, " +
             "{\"range\": {\"@timestamp\": {\"gte\": \"?1\", \"lte\": \"?2\"}}}, " +
             "{\"wildcard\": {\"message\": \"*?3*\"}}]}}")
-    List<LogEntry> findByIndexAndTimestampBetweenAndMessage(String index, LocalDateTime start, LocalDateTime end, String message);
+    List<LogEntry> findByIndexAndTimestampBetweenAndMessage(String index, String start, String end, String message);
 }

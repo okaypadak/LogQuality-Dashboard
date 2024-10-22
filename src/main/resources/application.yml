@@ -1,6 +1,8 @@
+server:
+  port: 9525
+  servlet:
+    context-path: /LogQualityDashboard
+
 spring:
   application:
-    name: LogQualityDasthboard
-  elasticsearch:
-    rest:
-      uris: http://localhost:9200
+    name: LogQualityDashboard

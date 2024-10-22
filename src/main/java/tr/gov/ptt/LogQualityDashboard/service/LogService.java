@@ -1,12 +1,11 @@
-package tr.gov.ptt.LogQualityDasthboard.service;
+package tr.gov.ptt.LogQualityDashboard.service;
 
-import entry.LogEntry;
+import tr.gov.ptt.LogQualityDashboard.entry.LogEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tr.gov.ptt.LogQualityDasthboard.repository.LogEntryRepository;
+import tr.gov.ptt.LogQualityDashboard.repository.LogEntryRepository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -15,7 +14,7 @@ public class LogService {
     @Autowired
     private LogEntryRepository logEntryRepository;
 
-    public List<LogEntry> getLogsByDateAndMessage(String index, LocalDateTime start, LocalDateTime end, String message) {
+    public List<LogEntry> getLogsByDateAndMessage(String index, String start, String end, String message) {
         return logEntryRepository.findByIndexAndTimestampBetweenAndMessage(index, start, end, message);
     }
 
