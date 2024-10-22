@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Log Viewer</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        #logTable {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Log Viewer</h2>
+
+    <form id="logForm" class="mb-4">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="indexName">Index Name</label>
+                <input type="text" class="form-control" id="indexName" name="index" placeholder="Enter index name" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="startDate">Start Date</label>
+                <input type="date" class="form-control" id="startDate" name="startDate" required>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="endDate">End Date</label>
+                <input type="date" class="form-control" id="endDate" name="endDate" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="searchMessage">Search Message</label>
+            <input type="text" class="form-control" id="searchMessage" name="message" placeholder="Search message">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="searchLogs()">Search</button>
+    </form>
+
+    <div id="tableContainer">
+        <table class="table table-bordered" id="logTable">
+            <thead>
+            <tr>
+                <th>Thread Name</th>
+                <th>Logger Name</th>
+                <th>Version</th>
+                <th>Timestamp</th>
+                <th>Level</th>
+                <th>Level Value</th>
+                <th>Message</th>
+            </tr>
+            </thead>
+            <tbody id="logEntriesBody">
+            <!-- Log entries will be injected here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function searchLogs() {
+        var formData = $("#logForm").serialize();
+
+        $.ajax({
+            type: "GET",
+            url: "/simpleLogs",
+            data: formData,
+            success: function (response) {
+                var tbody = $("#logEntriesBody");
+                tbody.empty();
+
+                response.forEach(function(logEntry) {
+                    tbody.append(`
+                        <tr>
+                            <td>${logEntry.threadName}</td>
+                            <td>${logEntry.loggerName}</td>
+                            <td>${logEntry.version}</td>
+                            <td>${logEntry.timestamp}</td>
+                            <td>${logEntry.level}</td>
+                            <td>${logEntry.levelValue}</td>
+                            <td>${logEntry.message}</td>
+                        </tr>
+                    `);
+                });
+
+                $("#logTable").show();
+            },
+            error: function () {
+                alert("Error retrieving log entries.");
+            }
+        });
+    }
+</script>
+</body>
+</html>
