@@ -6,27 +6,40 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.elasticsearch.indices.GetIndexRequest;
+import co.elastic.clients.elasticsearch.indices.GetIndexResponse;
 import co.elastic.clients.json.JsonData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
-public class ElasticsearchSearchService {
+public class elasticsearchService {
 
     private final ElasticsearchClient elasticsearchClient;
 
     @Autowired
-    public ElasticsearchSearchService(ElasticsearchClient elasticsearchClient) {
+    public elasticsearchService(ElasticsearchClient elasticsearchClient) {
         this.elasticsearchClient = elasticsearchClient;
     }
 
-    public List<Map> search(String keyword, String startTime, String endTime) {
+    public List<String> getIndexNames() throws IOException {
+        GetIndexRequest request = new GetIndexRequest.Builder().index("*").build();
+        GetIndexResponse response = elasticsearchClient.indices().get(request);
+
+        return response.result().keySet().stream()
+                .filter(indexName -> !indexName.startsWith("."))
+                .collect(Collectors.toList());
+    }
+
+    public List<Map> search(String indexName, String keyword, String startTime, String endTime) {
         try {
             // Zaman aralığı için Instant nesneleri oluştur
             Instant startInstant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(startTime + "T00:00:00Z"));
@@ -49,7 +62,7 @@ public class ElasticsearchSearchService {
 
             // Arama isteği oluştur
             SearchRequest searchRequest = SearchRequest.of(s -> s
-                    .index("testapp_logs") // Burada arama yapılacak indeksin adını girin
+                    .index(indexName) // Burada arama yapılacak indeksin adını girin
                     .query(Query.of(q -> q.bool(boolQuery)))
             );
 

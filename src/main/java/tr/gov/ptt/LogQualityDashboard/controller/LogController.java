@@ -6,32 +6,38 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import tr.gov.ptt.LogQualityDashboard.service.ElasticsearchSearchService;
+import tr.gov.ptt.LogQualityDashboard.service.elasticsearchService;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 public class LogController {
 
-    private final ElasticsearchSearchService elasticsearchSearchService;
+    private final elasticsearchService elasticsearchService;
 
     @Autowired
-    public LogController(ElasticsearchSearchService elasticsearchSearchService) {
-        this.elasticsearchSearchService = elasticsearchSearchService;
+    public LogController(elasticsearchService elasticsearchService) {
+        this.elasticsearchService = elasticsearchService;
     }
 
+
     @GetMapping("/logs")
-    public String showLogsPage(Model model) {
-        // Gerekli model verilerini ekleyebilirsiniz.
-        return "logs"; // logs.html sayfasını döndürür
+    public String showLogSearchForm(Model model) throws IOException {
+        List<String> indexNames = elasticsearchService.getIndexNames();
+        model.addAttribute("indexNames", indexNames);
+        return "logs";
     }
 
     @PostMapping("/logs")
-    public String searchLogs(@RequestParam String startTime, @RequestParam String endTime, @RequestParam(required = false) String keyword, Model model) {
-        // Elasticsearch arama işlemi
-        List<Map> results = elasticsearchSearchService.search(keyword, startTime, endTime);
+    public String searchLogs(@RequestParam String indexName, @RequestParam String startTime, @RequestParam String endTime, @RequestParam(required = false) String keyword, Model model) throws IOException {
+        List<Map> results = elasticsearchService.search(indexName, keyword, startTime, endTime);
+        List<String> indexNames = elasticsearchService.getIndexNames();
         model.addAttribute("logs", results);
-        return "logs"; // logs.html sayfasını döndürür
+        model.addAttribute("indexNames", indexNames);
+        model.addAttribute("selectedIndexName", indexName);
+
+        return "logs";
     }
 }
