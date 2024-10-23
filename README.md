@@ -17,3 +17,7 @@ This project provides a log search service integrated with Elasticsearch. Users 
 - Elasticsearch 8.x
 - Maven
 - Bootstrap (for frontend)
+
+![screenshot 1](https://github.com/okaypadak/LogQuality-Dashboard/blob/main/screenshots/ss_1.png)
+![screenshot 2](https://github.com/okaypadak/LogQuality-Dashboard/blob/main/screenshots/ss_2.png)
+
