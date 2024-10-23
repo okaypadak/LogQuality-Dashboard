@@ -1,65 +1,34 @@
 package tr.gov.ptt.LogQualityDashboard.entry;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
 import lombok.Data;
-import java.util.List;
+import org.thymeleaf.spring6.expression.Fields;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Data
-@Document(indexName = "sosyalyardimelektrik")
 public class LogEntry {
-
-    @Id
-    private String id;
-
-    //private String inputType;
-    //private Agent agent;
-    //private Host host;
-    //private Log log;
-    //private List<String> tags;
-    //private Fields fields;
-    //private Ecs ecs;
-
-    private String threadName;
     private String loggerName;
+    private String logTime;
+    private String message;
+    private String level;
+    private String exception;
+    private String threadName;
+    private boolean processed;
+    private Fields fields;
+    private String logId;
     private String version;
     private String timestamp;
-    private String level;
-    private long levelValue;
-    private String message;
 
-    @Data
-    public static class Agent {
-        private String ephemeralId;
-        private String id;
-        private String type;
-        private String hostname;
-        private String version;
-    }
-
-    @Data
-    public static class Host {
-        private String name;
-    }
-
-    @Data
-    public static class Log {
-        private File file;
-        private long offset;
-
-        @Data
-        public static class File {
-            private String path;
+    public Date getLogTimeAsDate() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        try {
+            return format.parse(this.logTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
-    @Data
-    public static class Fields {
-        private String app;
-    }
-
-    @Data
-    public static class Ecs {
-        private String version;
-    }
 }
