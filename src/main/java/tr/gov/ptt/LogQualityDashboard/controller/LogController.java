@@ -37,6 +37,7 @@ public class LogController {
         model.addAttribute("logs", results);
         model.addAttribute("indexNames", indexNames);
         model.addAttribute("selectedIndexName", indexName);
+        model.addAttribute("goruldu", true);
 
         return "logs";
     }
