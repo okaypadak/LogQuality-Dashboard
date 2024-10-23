@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import tr.gov.ptt.LogQualityDashboard.service.elasticsearchService;
@@ -40,5 +41,12 @@ public class LogController {
         model.addAttribute("goruldu", true);
 
         return "logs";
+    }
+
+    @GetMapping("/logId/{indexName}/{logId}")
+    public String getLogDetails(@PathVariable String indexName, @PathVariable String logId, Model model) {
+        List<Map> logDetails = elasticsearchService.getLogById(indexName, logId);
+        model.addAttribute("logDetails", logDetails);
+        return "logBlock";
     }
 }

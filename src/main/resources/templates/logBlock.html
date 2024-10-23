@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Log Block</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+        .custom-container {
+            max-width: calc(100% - 400px);
+            margin-left: 200px;
+            margin-right: 200px;
+        }
+    </style>
+</head>
+<body>
+<div class="custom-container mt-5">
+    <h1 class="text-center">Log Block</h1>
+
+    <div class="mt-4">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Message</th>
+                <th>Level</th>
+                <th>Thread Name</th>
+                <th>Log Id</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="log : ${logDetails}">
+                <td th:text="${log.logTime}">Tarih</td>
+                <td th:text="${log.message}">Mesaj</td>
+                <td th:text="${log.level}">Seviye</td>
+                <td th:text="${log.threadName}">İş Parçacığı</td>
+                <td th:text="${log.logId}">Log Id</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

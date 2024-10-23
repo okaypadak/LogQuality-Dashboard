@@ -30,6 +30,7 @@ public class elasticsearchService {
         this.elasticsearchClient = elasticsearchClient;
     }
 
+
     public List<String> getIndexNames() throws IOException {
         GetIndexRequest request = new GetIndexRequest.Builder().index("*").build();
         GetIndexResponse response = elasticsearchClient.indices().get(request);
@@ -37,6 +38,37 @@ public class elasticsearchService {
         return response.result().keySet().stream()
                 .filter(indexName -> !indexName.startsWith("."))
                 .collect(Collectors.toList());
+    }
+
+    public List<Map> getLogById(String indexName, String id) {
+        try {
+            // Bool sorgusu oluştur
+            BoolQuery boolQuery = BoolQuery.of(b ->
+                    b.must(m ->
+                            m.match(mq -> mq
+                                    .field("logId") // Mesajın bulunduğu alan adı
+                                    .query(id)
+                            )
+                    )
+            );
+
+
+            SearchRequest searchRequest = SearchRequest.of(s -> s
+                    .index(indexName)
+                    .query(Query.of(q -> q.bool(boolQuery)))
+            );
+
+            SearchResponse<Map> searchResponse = elasticsearchClient.search(searchRequest, Map.class);
+
+            return searchResponse.hits().hits().stream()
+                    .map(Hit::source)
+                    .toList();
+
+        } catch (Exception e) {
+            // Hata durumunda loglama veya farklı bir işlem yapabilirsiniz
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     public List<Map> search(String indexName, String keyword, String startTime, String endTime) {
