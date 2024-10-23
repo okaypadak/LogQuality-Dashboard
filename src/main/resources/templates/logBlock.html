@@ -16,9 +16,8 @@
 </head>
 <body>
 <div class="custom-container mt-5">
-    <h1 class="text-center">Log Block</h1>
-
-    <div class="mt-4">
+    <h1 class="text-center" th:text="'Log Block for ' + ${logId}"></h1>
+   <div class="mt-4">
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">
             <tr>
@@ -26,7 +25,6 @@
                 <th>Message</th>
                 <th>Level</th>
                 <th>Thread Name</th>
-                <th>Log Id</th>
             </tr>
             </thead>
             <tbody>
@@ -35,7 +33,6 @@
                 <td th:text="${log.message}">Mesaj</td>
                 <td th:text="${log.level}">Seviye</td>
                 <td th:text="${log.threadName}">İş Parçacığı</td>
-                <td th:text="${log.logId}">Log Id</td>
             </tr>
             </tbody>
         </table>

@@ -47,6 +47,7 @@ public class LogController {
     public String getLogDetails(@PathVariable String indexName, @PathVariable String logId, Model model) {
         List<Map> logDetails = elasticsearchService.getLogById(indexName, logId);
         model.addAttribute("logDetails", logDetails);
+        model.addAttribute("logId", logId);
         return "logBlock";
     }
 }
