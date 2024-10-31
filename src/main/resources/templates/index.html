@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Ana Sayfa</title>
+    <title>Home Page</title>
     <style>
         html, body {
             height: 100%;
@@ -36,16 +36,6 @@
             top: 10px;
             right: 10px;
         }
-        .toggle-button {
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: background 0.3s;
-        }
         .night-mode {
             background: #333;
             color: #f1f1f1;
@@ -60,21 +50,84 @@
             background: #333;
             border-bottom: 2px solid #ffcc00;
         }
-        .night-mode .toggle-button {
-            background-color: #ffcc00;
-            color: black;
+
+
+        /* The switch - the box around the slider */
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 60px;
+          height: 34px;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        /* The slider */
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 26px;
+          width: 26px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        input:checked + .slider {
+          background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+          box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+          -webkit-transform: translateX(26px);
+          -ms-transform: translateX(26px);
+          transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+          border-radius: 34px;
+        }
+
+        .slider.round:before {
+          border-radius: 50%;
         }
     </style>
 </head>
 <body>
 <div class="toggle-container">
-    <button class="toggle-button" onclick="toggleMode()">Gece Modu</button>
+    <label class="switch">
+        <input type="checkbox" onclick="toggleMode()">
+        <span class="slider round"></span>
+    </label>
 </div>
 
 <div class="tabs">
     <div class="tab active" onclick="changeIframe('logs')">Log Ara</div>
     <div class="tab" onclick="changeIframe('metric')">Metrik</div>
-    <div class="tab" onclick="changeIframe('realtime')">Anlık hatalar</div>
+<!--    <div class="tab" onclick="changeIframe('realtime')">Anlık hatalar</div>-->
 </div>
 
 <iframe id="contentFrame" src="logs"></iframe>
@@ -92,14 +145,10 @@
 
     function toggleMode() {
         document.body.classList.toggle('night-mode');
-        const button = document.querySelector('.toggle-button');
         isNightMode = !isNightMode;
-        button.textContent = isNightMode ? 'Gündüz Modu' : 'Gece Modu';
 
-        // Send night mode status to iframe
         document.getElementById('contentFrame').contentWindow.postMessage(
-            { nightMode: isNightMode },
-            '*'
+            { nightMode: isNightMode },'*'
         );
     }
 </script>
