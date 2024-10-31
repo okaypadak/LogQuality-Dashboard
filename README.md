@@ -1,4 +1,4 @@
-# LogQauality Dashboard Service
+# LogQuality Dashboard Service
 
 This project provides a log search service integrated with Elasticsearch. Users can search logs based on a specific time range and keywords.
 
