@@ -42,16 +42,15 @@ public class elasticsearchService {
 
     public List<Map> getLogById(String indexName, String id) {
         try {
-            // Bool sorgusu oluştur
+
             BoolQuery boolQuery = BoolQuery.of(b ->
                     b.must(m ->
                             m.match(mq -> mq
-                                    .field("logId") // Mesajın bulunduğu alan adı
+                                    .field("logId")
                                     .query(id)
                             )
                     )
             );
-
 
             SearchRequest searchRequest = SearchRequest.of(s -> s
                     .index(indexName)
@@ -65,7 +64,31 @@ public class elasticsearchService {
                     .toList();
 
         } catch (Exception e) {
-            // Hata durumunda loglama veya farklı bir işlem yapabilirsiniz
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+
+    public List<Map> getErrorWarn(String indexName) {
+        try {
+
+            BoolQuery boolQuery = BoolQuery.of(b -> b
+                    .must(m1 -> m1.match(me -> me.field("INFO").query("ERROR")))
+                    .must(m2 -> m2.match(mw -> mw.field("INFO").query("WARN")))
+            );
+
+            SearchRequest searchRequest = SearchRequest.of(s -> s
+                    .index(indexName)
+                    .query(Query.of(q -> q.bool(boolQuery)))
+            );
+
+            SearchResponse<Map> searchResponse = elasticsearchClient.search(searchRequest, Map.class);
+
+            return searchResponse.hits().hits().stream()
+                    .map(Hit::source)
+                    .toList();
+
+        } catch (Exception e) {
             e.printStackTrace();
             return List.of();
         }
@@ -73,40 +96,38 @@ public class elasticsearchService {
 
     public List<Map> search(String indexName, String keyword, String startTime, String endTime) {
         try {
-            // Zaman aralığı için Instant nesneleri oluştur
+
             Instant startInstant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(startTime + "T00:00:00Z"));
             Instant endInstant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(endTime + "T23:59:59Z"));
 
-            // Bool sorgusu oluştur
-            BoolQuery boolQuery = BoolQuery.of(b ->
-                    b.must(m -> m.range(r -> r
-                                            .field("@timestamp") // Zaman damgasının bulunduğu alan adı
+            BoolQuery boolQuery = BoolQuery.of(
+                    b -> b
+                    .must(m -> m.range(r -> r
+                                            .field("@timestamp")
                                             .gte(JsonData.of(startInstant.toString()))
                                             .lte(JsonData.of(endInstant.toString()))
                                     )
                             )
-                            .must(m -> m.match(mq -> mq
-                                            .field("message") // Mesajın bulunduğu alan adı
-                                            .query(keyword)
-                                    )
+                    .must(m -> m.match(mq -> mq
+                                    .field("message")
+                                    .query(keyword)
                             )
+                    )
             );
 
-            // Arama isteği oluştur
             SearchRequest searchRequest = SearchRequest.of(s -> s
-                    .index(indexName) // Burada arama yapılacak indeksin adını girin
+                    .index(indexName)
                     .query(Query.of(q -> q.bool(boolQuery)))
             );
 
             SearchResponse<Map> searchResponse = elasticsearchClient.search(searchRequest, Map.class);
 
-            // Sonuçları döndür
+
             return searchResponse.hits().hits().stream()
                     .map(Hit::source)
                     .toList();
 
         } catch (Exception e) {
-            // Hata durumunda loglama veya farklı bir işlem yapabilirsiniz
             e.printStackTrace();
             return List.of();
         }

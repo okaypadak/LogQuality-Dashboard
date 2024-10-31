@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ana Sayfa</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            transition: background 0.3s, color 0.3s;
+        }
+        .tabs {
+            display: flex;
+            cursor: pointer;
+            padding: 10px;
+            background: #f1f1f1;
+        }
+        .tab {
+            padding: 10px 20px;
+            margin-right: 5px;
+            background: #e2e2e2;
+            transition: background 0.3s;
+        }
+        .tab.active {
+            background: #ffffff;
+            border-bottom: 2px solid #007bff;
+        }
+        iframe {
+            width: 100%;
+            height: calc(100% - 50px);
+            border: none;
+        }
+        .toggle-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .toggle-button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .night-mode {
+            background: #333;
+            color: #f1f1f1;
+        }
+        .night-mode .tabs {
+            background: #444;
+        }
+        .night-mode .tab {
+            background: #555;
+        }
+        .night-mode .tab.active {
+            background: #333;
+            border-bottom: 2px solid #ffcc00;
+        }
+        .night-mode .toggle-button {
+            background-color: #ffcc00;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+<div class="toggle-container">
+    <button class="toggle-button" onclick="toggleMode()">Gece Modu</button>
+</div>
+
+<div class="tabs">
+    <div class="tab active" onclick="changeIframe('logs')">Log Ara</div>
+    <div class="tab" onclick="changeIframe('metric')">Metrik</div>
+    <div class="tab" onclick="changeIframe('realtime')">Anlık hatalar</div>
+</div>
+
+<iframe id="contentFrame" src="logs"></iframe>
+
+<script>
+    let isNightMode = false;
+
+    function changeIframe(url) {
+        document.getElementById('contentFrame').src = url;
+
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    function toggleMode() {
+        document.body.classList.toggle('night-mode');
+        const button = document.querySelector('.toggle-button');
+        isNightMode = !isNightMode;
+        button.textContent = isNightMode ? 'Gündüz Modu' : 'Gece Modu';
+
+        // Send night mode status to iframe
+        document.getElementById('contentFrame').contentWindow.postMessage(
+            { nightMode: isNightMode },
+            '*'
+        );
+    }
+</script>
+</body>
+</html>
